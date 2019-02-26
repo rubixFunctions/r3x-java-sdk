@@ -3,7 +3,7 @@ import com.google.gson.JsonObject;
 public class R3xHelloWorld {
     public static void main(String[] args){
         R3x r3x = new R3x();
-        r3x.execute(R3xHelloWorld::r3xFunc);
+        r3x.execute(r3xFunc());
     }
 
     private static JsonObject r3xFunc(){

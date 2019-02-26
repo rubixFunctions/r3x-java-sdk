@@ -1,3 +1,4 @@
+import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -9,7 +10,7 @@ import java.net.InetSocketAddress;
 public class R3x {
 
     // Handle User Function
-    public void execute(Runnable r3x) {
+    public void execute(JsonObject r3x) {
         try {
             HTTPStream(r3x);
         } catch (IOException e) {
@@ -17,19 +18,24 @@ public class R3x {
         }
     }
 
-    private void HTTPStream(Runnable r3x) throws IOException {
-        r3x.run();
+    private void HTTPStream(JsonObject r3x) throws IOException {
+        R3xResHandler resHandler = new R3xResHandler(r3x);
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        server.createContext("/", new MyHandler());
+        server.createContext("/", resHandler);
         server.setExecutor(null);
         server.start();
     }
 
-    static class MyHandler implements HttpHandler {
+    static class R3xResHandler implements HttpHandler {
+        JsonObject r3x;
+
+        R3xResHandler(JsonObject r3x){
+            this.r3x = r3x;
+        }
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
-            String response = "This is the response";
+            String response = r3x.toString();
             httpExchange.sendResponseHeaders(200, response.length());
             OutputStream os = httpExchange.getResponseBody();
             os.write(response.getBytes());
