@@ -36,7 +36,7 @@ public class R3x {
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String response = r3x.toString();
-            httpExchange.getResponseHeaders().set("Content-Type", "appication/json");
+            httpExchange.getResponseHeaders().set("Content-Type", "application/json");
             httpExchange.sendResponseHeaders(200, response.length());
             OutputStream os = httpExchange.getResponseBody();
             os.write(response.getBytes());
