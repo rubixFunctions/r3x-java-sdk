@@ -9,7 +9,7 @@ public class R3xHelloWorld {
     private static JsonObject r3xFunc(){
         JsonObject res = new JsonObject();
         res.addProperty("message", "Hello r3x");
-        System.out.println(res);
+        System.out.println("R3X func executed -- " + res);
         return res;
     }
 }

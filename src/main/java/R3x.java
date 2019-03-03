@@ -1,11 +1,14 @@
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class R3x {
 
@@ -35,6 +38,21 @@ public class R3x {
 
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
+            InputStream input = httpExchange.getRequestBody();
+            StringBuilder sb = new StringBuilder();
+            new BufferedReader(new InputStreamReader(input))
+                    .lines()
+                    .forEach((String s) -> sb.append(s));
+            JsonParser parser = new JsonParser();
+            JsonElement jsonTree = parser.parse(sb.toString());
+            System.out.println(jsonTree);
+
+
+            JsonHandler jh = new JsonHandler();
+
+            jh.processJsonElement(jsonTree);
+
+
             String response = r3x.toString();
             httpExchange.getResponseHeaders().set("Content-Type", "application/json");
             httpExchange.sendResponseHeaders(200, response.length());
@@ -42,6 +60,7 @@ public class R3x {
             os.write(response.getBytes());
             os.close();
         }
+
     }
 }
 
