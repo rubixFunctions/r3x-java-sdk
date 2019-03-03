@@ -1,11 +1,13 @@
+package util;
+
 import com.google.gson.*;
 
 import java.util.Map;
 import java.util.Set;
 
-class JsonHandler {
+public class JsonHandler {
 
-    JsonHandler(){}
+    public JsonHandler(){}
 
     public void processJsonElement(JsonElement e) {
         if (e.isJsonArray()) {
