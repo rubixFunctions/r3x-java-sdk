@@ -1,6 +1,9 @@
 import com.google.gson.JsonObject;
 
-public class R3xHelloWorld {
+/*
+Test example, to be used for local dev of SDK
+ */
+public class RubixHelloWorld {
 
     public static void main(String[] args){
         Rubix r3x = new Rubix();
