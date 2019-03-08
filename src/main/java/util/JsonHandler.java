@@ -2,14 +2,25 @@ package util;
 
 import com.google.gson.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class JsonHandler {
 
-    public JsonHandler(){}
+    Map<String, JsonElement>values;
 
-    public void processJsonElement(JsonElement e) {
+    public JsonHandler(){
+        values = new HashMap<>();
+    }
+
+    public JsonObject processString(String s) {
+        JsonParser parser = new JsonParser();
+        JsonObject json = (JsonObject) parser.parse(s);
+        return json;
+    }
+
+    public Map processJsonElement(JsonElement e) {
         if (e.isJsonArray()) {
             processJsonArray(e.getAsJsonArray());
         } else if (e.isJsonNull()) {
@@ -19,6 +30,7 @@ public class JsonHandler {
         } else if (e.isJsonPrimitive()) {
             processJsonPrimitive(e.getAsJsonPrimitive());
         }
+        return values;
     }
 
     private void processJsonArray(JsonArray a) {
@@ -35,7 +47,11 @@ public class JsonHandler {
         Set<Map.Entry<String, JsonElement>> members= o.entrySet();
         for (Map.Entry<String, JsonElement> e : members) {
             System.out.println("Processing object member: " + e.getKey());
-            processJsonElement(e.getValue());
+            if (e.getValue().isJsonPrimitive()){
+                values.put(e.getKey(), e.getValue());
+            } else {
+                processJsonElement(e.getValue());
+            }
         }
     }
 

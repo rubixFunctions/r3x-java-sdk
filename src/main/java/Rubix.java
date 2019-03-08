@@ -2,35 +2,39 @@ import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import util.JsonHandler;
-
 import java.io.*;
 import java.net.InetSocketAddress;
 
-public class R3x {
 
-    // Handle User Function
-    public void execute(JsonObject r3x) {
+public class Rubix {
+
+    private RubixHandler handler;
+
+    public void setHandler(final RubixHandler handler){
+        this.handler = handler;
+    }
+
+    public void runServer(){
         try {
-            HTTPStream(r3x);
+            HTTPStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void HTTPStream(JsonObject r3x) throws IOException {
-        R3xResHandler resHandler = new R3xResHandler(r3x);
+    private void HTTPStream() throws IOException {
+        R3xResHandler resHandler = new R3xResHandler(this.handler);
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/", resHandler);
         server.setExecutor(null);
         server.start();
     }
 
-    static class R3xResHandler implements HttpHandler {
-        JsonObject r3x;
+    public class R3xResHandler implements HttpHandler {
+        private RubixHandler handler;
 
-        R3xResHandler(JsonObject r3x){
-            this.r3x = r3x;
+        R3xResHandler(RubixHandler r3x){
+            this.handler = r3x;
         }
 
         @Override
@@ -41,16 +45,8 @@ public class R3x {
                     .lines()
                     .forEach((String s) -> sb.append(s));
             JsonParser parser = new JsonParser();
-            JsonElement jsonTree = parser.parse(sb.toString());
-            System.out.println(jsonTree);
-
-
-            JsonHandler jh = new JsonHandler();
-
-            jh.processJsonElement(jsonTree);
-
-
-            String response = r3x.toString();
+            JsonObject json = (JsonObject) parser.parse(sb.toString());
+            String response = String.valueOf(this.handler.execute(json));
             httpExchange.getResponseHeaders().set("Content-Type", "application/json");
             httpExchange.sendResponseHeaders(200, response.length());
             OutputStream os = httpExchange.getResponseBody();
