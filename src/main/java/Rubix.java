@@ -5,10 +5,12 @@ import handlers.RubixResHandler;
 
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.util.Optional;
 
 
 public class Rubix {
 
+    private int PORT;
     private RubixHandler handler;
 
     public void setHandler(final RubixHandler handler){
@@ -24,8 +26,10 @@ public class Rubix {
     }
 
     private void HTTPStream() throws IOException {
+        PORT = Integer.parseInt(Optional.ofNullable(System.getenv("PORT")).orElseThrow(
+                () -> new IOException("PORT is not set in the environment")));
         RubixResHandler resHandler = new RubixResHandler(this.handler);
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/", resHandler);
         server.setExecutor(null);
         server.start();
